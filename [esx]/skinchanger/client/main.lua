@@ -109,35 +109,43 @@ end
 function LoadDefaultModel(malePed, cb)
 	local playerPed = PlayerPedId()
 	local characterModel
-
+  
 	if malePed then
-		characterModel = GetHashKey("mp_m_freemode_01")
+	  characterModel = GetHashKey('mp_m_freemode_01')
+	  Character["sex"] = 0
 	else
-		characterModel = GetHashKey("mp_f_freemode_01")
+	  characterModel = GetHashKey('mp_f_freemode_01')
+	  Character["sex"] = 1
 	end
-
-	RequestModel(characterModel)
-
-	CreateThread(function()
-		while not HasModelLoaded(characterModel) do
-			RequestModel(characterModel)
-			Wait(0)
+  
+	RequestModel(characterModel)  
+  
+	Citizen.CreateThread(function()
+	  while not HasModelLoaded(characterModel) do
+		RequestModel(characterModel)
+		Citizen.Wait(0)
+	  end
+  
+	  if IsModelInCdimage(characterModel) and IsModelValid(characterModel) then
+		SetPlayerModel(PlayerId(), characterModel)
+		SetPedDefaultComponentVariation(playerPed)
+		for i=1, #Components, 1 do
+		  if Components[i].name ~= "sex" then
+			Character[Components[i].name] = Components[i].value
+		  end
 		end
-
-		if IsModelInCdimage(characterModel) and IsModelValid(characterModel) then
-			SetPlayerModel(PlayerId(), characterModel)
-			SetPedDefaultComponentVariation(playerPed)
-		end
-
-		SetModelAsNoLongerNeeded(characterModel)
-
-		if cb ~= nil then
-			cb()
-		end
-
-		TriggerEvent('skinchanger:modelLoaded')
+		ApplySkin(Character)
+	  end
+  
+	  SetModelAsNoLongerNeeded(characterModel)
+  
+	  if cb ~= nil then
+		cb()
+	  end
+  
+	  TriggerEvent('skinchanger:modelLoaded')
 	end)
-end
+  end
 
 function GetMaxVals()
 	local playerPed = PlayerPedId()

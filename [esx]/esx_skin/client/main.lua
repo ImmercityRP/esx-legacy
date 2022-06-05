@@ -247,30 +247,6 @@ AddEventHandler('esx_skin:resetFirstSpawn', function()
     ESX.PlayerLoaded = false
 end)
 
-AddEventHandler('esx_skin:playerRegistered', function()
-    CreateThread(function()
-        while not ESX.PlayerLoaded do
-            Wait(100)
-        end
-
-        if firstSpawn then
-            ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin, jobSkin)
-                if skin == nil then
-                    TriggerEvent('skinchanger:loadSkin', {sex = 0}, OpenSaveableMenu)
-                    Wait(100)
-                    skinLoaded = true
-                else
-                    TriggerEvent('skinchanger:loadSkin', skin)
-                    Wait(100)
-                    skinLoaded = true
-                end
-            end)
-
-            firstSpawn = false
-        end
-    end)
-end)
-
 RegisterNetEvent('esx:playerLoaded')
 AddEventHandler('esx:playerLoaded', function(xPlayer)
     ESX.PlayerLoaded = true
