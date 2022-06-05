@@ -8,7 +8,7 @@ function Drunk(level, start)
     local playerPed = PlayerPedId()
 
     if start then
-      DoScreenFadeOut(800)
+      DoScreenFadeOut(250)
       Wait(1000)
     end
 
@@ -49,7 +49,7 @@ function Drunk(level, start)
     SetPedIsDrunk(playerPed, true)
 
     if start then
-      DoScreenFadeIn(800)
+      DoScreenFadeIn(250)
     end
 
   end)
@@ -62,7 +62,7 @@ function Reality()
 
     local playerPed = PlayerPedId()
 
-    DoScreenFadeOut(800)
+    DoScreenFadeOut(250)
     Wait(1000)
 
     ClearTimecycleModifier()
@@ -71,7 +71,7 @@ function Reality()
     SetPedIsDrunk(playerPed, false)
     SetPedMotionBlur(playerPed, false)
 
-    DoScreenFadeIn(800)
+    DoScreenFadeIn(250)
 
   end)
 
@@ -88,7 +88,7 @@ AddEventHandler('esx_status:loaded', function(status)
       end
     end,
     function(status)
-      status.remove(1500)
+      status.remove(1000)
     end
   )
 
@@ -110,9 +110,9 @@ AddEventHandler('esx_status:loaded', function(status)
 
           local level = 0
 
-          if status.val <= 250000 then
+          if status.val <= 350000 then
             level = 0
-          elseif status.val <= 500000 then
+          elseif status.val <= 700000 then
             level = 1
           else
             level = 2
@@ -154,4 +154,43 @@ AddEventHandler('esx_optionalneeds:onDrink', function()
   Wait(1000)
   ClearPedTasksImmediately(playerPed)
 
+end)
+
+AddEventHandler('esx_status:loaded', function(status)
+  Citizen.CreateThread(function()
+      while true do
+          Wait(1000)
+          TriggerEvent('esx_status:getStatus', 'hunger', function(status)
+              if status.val == 250000 then
+                  exports['mythic_notify']:SendAlert('inform', "You are hungry.", 15000)
+              elseif status.val == 150000 then
+                  exports['mythic_notify']:SendAlert('inform', "You are really hungry.", 30000)
+              elseif status.val == 50000 then
+                  DoScreenFadeOut(500)
+                  Wait(1000)
+                  DoScreenFadeIn(500)
+                  exports['mythic_notify']:SendAlert('error', "You are dying of starvation!", 30000)
+              end
+          end)
+      end
+  end)
+end)
+AddEventHandler('esx_status:loaded', function(status)
+  Citizen.CreateThread(function()
+      while true do
+          Wait(1000)
+          TriggerEvent('esx_status:getStatus', 'thirst', function(status)
+            if status.val == 250000 then
+                exports['mythic_notify']:SendAlert('inform', "You are thirsty.", 15000)
+            elseif status.val == 150000 then
+                exports['mythic_notify']:SendAlert('inform', "You are really thirsty.", 30000)
+            elseif status.val == 50000 then
+                DoScreenFadeOut(500)
+                Wait(1000)
+                DoScreenFadeIn(500)
+                exports['mythic_notify']:SendAlert('error', "You are dying of thirst!", 30000)
+            end
+          end)
+      end
+  end)
 end)

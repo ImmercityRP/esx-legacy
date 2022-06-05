@@ -1,5 +1,5 @@
 Config = {}
 
-Config.TickTime         = 100
-Config.UpdateClientTime = 5000
+Config.TickTime         = 1000
+Config.UpdateClientTime = 10000
 Config.Locale 			= 'en'
