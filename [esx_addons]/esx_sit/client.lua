@@ -47,41 +47,99 @@ CreateThread(function()
 			wakeup()
 		end
 
+		if IsControlJustPressed(0, 38) and IsControlPressed(0, 21) and IsInputDisabled(0) and IsPedOnFoot(playerPed) then
+			if sitting then
+				wakeup()
+			end			
+		end
+
 		Wait(wait)
 	end
 end)
 
-RegisterCommand('sit', function()
-	if sitting then
+CreateThread(function()
+	local Sitables = {}
+
+	for k,v in pairs(Config.Interactables) do
+		local model = GetHashKey(v)
+		table.insert(Sitables, model)
+	end
+	Wait(100)
+	exports['bt-target']:AddTargetModel(Sitables, {
+        options = {
+            {
+                event = "Boost-Sit:Sit",
+                icon = "fas fa-chair",
+                label = "Sit",
+            },
+        },
+        job = {"all"},
+        distance = Config.MaxDistance
+    })
+end)
+
+RegisterNetEvent("Boost-Sit:Sit")
+AddEventHandler("Boost-Sit:Sit", function()
+	--print("Sit")
+	local playerPed = PlayerPedId()
+
+	if sitting and not IsPedUsingScenario(playerPed, currentScenario) then
 		wakeup()
-	else
-		local object, distance = GetNearChair()
+	end
 
-		if Config.Debug then
-			table.insert(debugProps, object)
-		end
+		-- Disable controls
+	if disableControls then
+		DisableControlAction(1, 37, true) -- Disables INPUT_SELECT_WEAPON (TAB)
+	end
 
-		if distance and distance < 1.4 then
-			local hash = GetEntityModel(object)
+	local object, distance = GetNearChair()
 
-			for k,v in pairs(Config.Sitable) do
-				if GetHashKey(k) == hash then
-					sit(object, k, v)
-					break
-				end
+	if Config.Debug then
+		table.insert(debugProps, object)
+	end
+
+	if distance and distance < 1.4 then
+		local hash = GetEntityModel(object)
+		for k,v in pairs(Config.Sitable) do
+			if GetHashKey(k) == hash then
+				sit(object, k, v)
+				break
 			end
 		end
 	end
-end, false)
+end)
+
+-- RegisterCommand('sit', function()
+-- 	if sitting then
+-- 		wakeup()
+-- 	else
+-- 		local object, distance = GetNearChair()
+
+-- 		if Config.Debug then
+-- 			table.insert(debugProps, object)
+-- 		end
+
+-- 		if distance and distance < 1.4 then
+-- 			local hash = GetEntityModel(object)
+
+-- 			for k,v in pairs(Config.Sitable) do
+-- 				if GetHashKey(k) == hash then
+-- 					sit(object, k, v)
+-- 					break
+-- 				end
+-- 			end
+-- 		end
+-- 	end
+-- end, false)
 
 
-RegisterKeyMapping('sit', 'Sit', 'keyboard', 'e')
+-- RegisterKeyMapping('sit', 'Sit', 'keyboard', 'e')
 
 function GetNearChair()
 	local object, distance
 	local coords = GetEntityCoords(PlayerPedId())
 	for i=1, #Config.Interactables do
-		object = GetClosestObjectOfType(coords, 3.0, GetHashKey(Config.Interactables[i]), false, false, false)
+		object = GetClosestObjectOfType(coords, 1.5, GetHashKey(Config.Interactables[i]), false, false, false)
 		distance = #(coords - GetEntityCoords(object))
 		if distance < 1.6 then
 			return object, distance
