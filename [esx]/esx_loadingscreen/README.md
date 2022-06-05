@@ -1,3 +1,0 @@
-# ESX Loadingscreen
-
-A loadingscreen
