@@ -4,6 +4,7 @@ local IsAnimated = false
 AddEventHandler('esx_basicneeds:resetStatus', function()
 	TriggerEvent('esx_status:set', 'hunger', 500000)
 	TriggerEvent('esx_status:set', 'thirst', 500000)
+	TriggerEvent('esx_status:set', 'stress', 10)
 end)
 
 
@@ -12,10 +13,11 @@ AddEventHandler('esx_basicneeds:healPlayer', function()
 	-- restore hunger & thirst
 	TriggerEvent('esx_status:set', 'hunger', 1000000)
 	TriggerEvent('esx_status:set', 'thirst', 1000000)
+	TriggerEvent('esx_status:set', 'stress', 10)
 
 	-- restore hp
-	local playerPed = PlayerPedId()
-	SetEntityHealth(playerPed, GetEntityMaxHealth(playerPed))
+	-- local playerPed = PlayerPedId()
+	-- SetEntityHealth(playerPed, GetEntityMaxHealth(playerPed))
 end)
 
 AddEventHandler('esx:onPlayerDeath', function()
@@ -41,7 +43,7 @@ AddEventHandler('esx_status:loaded', function(status)
 	TriggerEvent('esx_status:registerStatus', 'thirst', 1000000, '#0C98F1', function(status)
 		return Config.Visible
 	end, function(status)
-		status.remove(75)
+		status.remove(50)
 	end)
 
 end)
@@ -125,3 +127,66 @@ AddEventHandler('esx_basicneeds:onDrink', function(prop_name)
 
 	end
 end)
+
+
+
+RegisterNetEvent('esx_basicneeds:onSmoke')
+AddEventHandler('esx_basicneeds:onSmoke', function(prop_name)
+	if not IsAnimated then
+		prop_name = prop_name or 'ng_proc_cigarette01a'
+		IsAnimated = true
+
+		Citizen.CreateThread(function()
+			local playerPed = PlayerPedId()
+			local x,y,z = table.unpack(GetEntityCoords(playerPed))
+			local prop = CreateObject(GetHashKey(prop_name), x, y, z + 0.2, true, true, true)
+			local boneIndex = GetPedBoneIndex(playerPed, 64097)
+			AttachEntityToEntity(prop, playerPed, boneIndex, 0.020, 0.02, -0.008, 100.0, 0.0, 100.0, true, true, false, true, 1, true)
+
+			ESX.Streaming.RequestAnimDict('move_p_m_two_idles@generic', function()
+				TaskPlayAnim(playerPed, 'move_p_m_two_idles@generic', 'fidget_sniff_fingers', 8.0, -8, -1, 49, 0, 0, 0, 0)
+
+				Citizen.Wait(5000)
+				IsAnimated = false
+				ClearPedSecondaryTask(playerPed)
+				DeleteObject(prop)
+			end)
+		end)
+
+	end
+end)
+
+-- RegisterNetEvent('esx_basicneeds:onSmoke')
+-- AddEventHandler('esx_basicneeds:onSmoke', function(prop_name)
+-- 	if not IsAnimated then
+-- 		prop_name = prop_name or 'ng_proc_cigarette01a'
+-- 		IsAnimated = true
+
+-- 		Citizen.CreateThread(function()
+-- 		local playerPed = PlayerPedId()
+-- 		local x,y,z = table.unpack(GetEntityCoords(playerPed))
+-- 		local prop = CreateObject(GetHashKey(prop_name), x, y, z + 0.2, true, true, true)
+-- 		local boneIndex = GetPedBoneIndex(playerPed, 18905)
+-- 		AttachEntityToEntity(prop, playerPed, boneIndex, 0.12, 0.028, 0.001, 10.0, 175.0, 0.0, true, true, false, true, 1, true)
+		
+-- 		ESX.Streaming.RequestAnimDict('amb@world_human_aa_smoke@male@idle_a', function()
+-- 			TaskStartScenarioInPlace(playerPed, 'WORLD_HUMAN_SMOKING', 0, false)
+
+-- 			Citizen.Wait(30000)
+-- 			IsAnimated = false
+-- 			ClearPedTasksImmediately(playerPed)
+-- 			DeleteObject(prop)
+-- 		end)
+-- 	end)
+
+-- 	end
+-- end)
+
+-- RegisterNetEvent('esx_basicneeds:onSmoke')
+-- AddEventHandler('esx_basicneeds:onSmoke', function(source)
+-- 	local playerPed = PlayerPedId()
+-- 	ExecuteCommand('e smoke')
+-- 	Citizen.Wait(10000)
+-- 	ExecuteCommand('e c')
+-- 	ClearPedTasksImmediately(playerPed)
+-- end)
