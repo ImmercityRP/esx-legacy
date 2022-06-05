@@ -140,7 +140,7 @@ AddEventHandler('esx_jobs:action', function(job, zone, zoneKey)
 										local giveBack = ESX.Math.Round(vehicleHealth / vehicleMaxHealth, 2)
 
 										TriggerServerEvent('esx_jobs:caution', "give_back", giveBack, 0, 0)
-										DeleteVehicle(GetVehiclePedIsIn(playerPed, false))
+										ESX.Game.DeleteVehicle(GetVehiclePedIsIn(playerPed, false))
 
 										if w.Teleport ~= 0 then
 											ESX.Game.Teleport(playerPed, w.Teleport)
@@ -334,41 +334,41 @@ CreateThread(function()
 	end
 end)
 
--- Display public markers
-CreateThread(function()
-	while true do
-		local Sleep = 1500
-		local coords = GetEntityCoords(PlayerPedId())
-		for k,v in pairs(Config.PublicZones) do
-			if(v.Marker ~= -1 and #(coords - v.Pos) < Config.DrawDistance) then
-				Sleep = 0
-				DrawMarker(v.Marker, v.Pos.x, v.Pos.y, v.Pos.z, 0.0, 0.0, 0.0, 0, 0.0, 0.0, v.Size.x, v.Size.y, v.Size.z, v.Color.r, v.Color.g, v.Color.b, 100, false, true, 2, false, false, false, false)
-			end
-		end
-	Wait(Sleep)
-	end
-end)
+-- -- Display public markers
+-- CreateThread(function()
+-- 	while true do
+-- 		local Sleep = 1500
+-- 		local coords = GetEntityCoords(PlayerPedId())
+-- 		for k,v in pairs(Config.PublicZones) do
+-- 			if(v.Marker ~= -1 and #(coords - v.Pos) < Config.DrawDistance) then
+-- 				Sleep = 0
+-- 				DrawMarker(v.Marker, v.Pos.x, v.Pos.y, v.Pos.z, 0.0, 0.0, 0.0, 0, 0.0, 0.0, v.Size.x, v.Size.y, v.Size.z, v.Color.r, v.Color.g, v.Color.b, 100, false, true, 2, false, false, false, false)
+-- 			end
+-- 		end
+-- 	Wait(Sleep)
+-- 	end
+-- end)
 
--- Activate public marker
-CreateThread(function()
-	while true do
-		local Sleep = 1500
-		local coords   = GetEntityCoords(PlayerPedId())
+-- -- Activate public marker
+-- CreateThread(function()
+-- 	while true do
+-- 		local Sleep = 1500
+-- 		local coords   = GetEntityCoords(PlayerPedId())
 
-		for k,v in pairs(Config.PublicZones) do
-			if #(coords - v.Pos) < v.Size.x/2 then
-				Sleep = 0
-				ESX.ShowHelpNotification(v.Hint)
-				hintIsShowed = true
-				if IsControlJustReleased(0, 38) then
-					ESX.Game.Teleport(PlayerPedId(), position)
-				end
-			end
-		end
+-- 		for k,v in pairs(Config.PublicZones) do
+-- 			if #(coords - v.Pos) < v.Size.x/2 then
+-- 				Sleep = 0
+-- 				ESX.ShowHelpNotification(v.Hint)
+-- 				hintIsShowed = true
+-- 				if IsControlJustReleased(0, 38) then
+-- 					ESX.Game.Teleport(PlayerPedId(), position)
+-- 				end
+-- 			end
+-- 		end
 
-	Wait(Sleep)
-	end
-end)
+-- 	Wait(Sleep)
+-- 	end
+-- end)
 
 -- Activate menu when player is inside marker
 CreateThread(function()
