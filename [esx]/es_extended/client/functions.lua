@@ -817,6 +817,7 @@ function ESX.Game.SetVehicleProperties(vehicle, props)
 		if props.modArmor then SetVehicleMod(vehicle, 16, props.modArmor, false) end
 		if props.modTurbo then ToggleVehicleMod(vehicle,  18, props.modTurbo) end
 		if props.modXenon then ToggleVehicleMod(vehicle,  22, props.modXenon) end
+		if props.modHeadlight then SetVehicleHeadlightsColour(vehicle, props.modHeadlight) end
 		if props.modTyresBurst ~= nil then
 			SetVehicleTyresCanBurst(vehicle,props.modTyresBurst)
 		end
