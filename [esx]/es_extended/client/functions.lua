@@ -591,45 +591,26 @@ function ESX.Game.GetVehicleProperties(vehicle)
 	if DoesEntityExist(vehicle) then
 		local colorPrimary, colorSecondary = GetVehicleColours(vehicle)
 		local pearlescentColor, wheelColor = GetVehicleExtraColours(vehicle)
-		local hasCustomPrimaryColor = GetIsVehiclePrimaryColourCustom(vehicle)
-		local customPrimaryColor = nil
-		if hasCustomPrimaryColor then
-			local r, g, b = GetVehicleCustomPrimaryColour(vehicle)
-			customPrimaryColor = { r, g, b }
-		end
-		
-		local hasCustomSecondaryColor = GetIsVehicleSecondaryColourCustom(vehicle)
-		local customSecondaryColor = nil
-		if hasCustomSecondaryColor then
-			local r, g, b = GetVehicleCustomSecondaryColour(vehicle)
-			customSecondaryColor = { r, g, b }
-		end
+		local paintType1, whoCaresColor1, nnn = GetVehicleModColor_1(vehicle)
+		local paintType2, whoCaresColor2 = GetVehicleModColor_2(vehicle)
+		local color3 = {}
+		local color4 = {}
+		color3[1], color3[2], color3[3] = GetVehicleCustomPrimaryColour(vehicle)
+		color4[1], color4[2], color4[3] = GetVehicleCustomSecondaryColour(vehicle)
+		local pearlescentColor, wheelColor = GetVehicleExtraColours(vehicle)
+		local dshcolor = GetVehicleDashboardColour(vehicle)
+		local intcolor = GetVehicleInteriorColour(vehicle)
+		local drift = GetDriftTyresEnabled(vehicle)
 		local extras = {}
 
-		for extraId=0, 12 do
-			if DoesExtraExist(vehicle, extraId) then
-				local state = IsVehicleExtraTurnedOn(vehicle, extraId) == 1
-				extras[tostring(extraId)] = state
+		for id=0, 12 do
+			if DoesExtraExist(vehicle, id) then
+				local state = IsVehicleExtraTurnedOn(vehicle, id) == 1
+				extras[tostring(id)] = state
 			end
 		end
 
-		local doorsBroken, windowsBroken, tyreBurst = {}, {}, {}
-		local numWheels = tostring(GetVehicleNumberOfWheels(vehicle))
-
-		local TyresIndex = { -- Wheel index list according to the number of vehicle wheels.
-				['2'] = {0, 4}, -- Bike and cycle.
-				['3'] = {0, 1, 4, 5}, -- Vehicle with 3 wheels (get for wheels because some 3 wheels vehicles have 2 wheels on front and one rear or the reverse).
-				['4'] = {0, 1, 4, 5}, -- Vehicle with 4 wheels.
-				['6'] = {0, 1, 2, 3, 4, 5}, -- Vehicle with 6 wheels.
-		}
-
-		for tyre,idx in pairs(TyresIndex[numWheels]) do
-				if IsVehicleTyreBurst(vehicle, idx, false) then
-						tyreBurst[tostring(idx)] = true
-				else
-						tyreBurst[tostring(idx)] = false
-				end
-		end
+		local doorsBroken, windowsBroken = {}, {}
 
 		for windowId = 0, 7 do -- 13
 				if not IsVehicleWindowIntact(vehicle, windowId) then 
@@ -650,8 +631,7 @@ function ESX.Game.GetVehicleProperties(vehicle)
 		return {
 			model             = GetEntityModel(vehicle),
 			doorsBroken       = doorsBroken,
-			windowsBroken     = windowsBroken,
-			tyreBurst         = tyreBurst,		
+			windowsBroken     = windowsBroken,	
 			plate             = ESX.Math.Trim(GetVehicleNumberPlateText(vehicle)),
 			plateIndex        = GetVehicleNumberPlateTextIndex(vehicle),
 
@@ -663,12 +643,16 @@ function ESX.Game.GetVehicleProperties(vehicle)
 			dirtLevel         = ESX.Math.Round(GetVehicleDirtLevel(vehicle), 1),
 			color1            = colorPrimary,
 			color2            = colorSecondary,
-			customPrimaryColor = customPrimaryColor,
-			customSecondaryColor = customSecondaryColor,
-
+			color3            = color3,
+			color4            = color4,
+			paintType		  = {paintType1, paintType2},
+			ColorType 		  = {whoCaresColor1, whoCaresColor2},	
 			pearlescentColor  = pearlescentColor,
 			wheelColor        = wheelColor,
-
+			dshcolor 		  = dshcolor,
+			intcolor 		  = intcolor,
+			drift			  = drift,
+			
 			wheels            = GetVehicleWheelType(vehicle),
 			windowTint        = GetVehicleWindowTint(vehicle),
 			xenonColor        = GetVehicleXenonLightsColor(vehicle),
@@ -706,6 +690,8 @@ function ESX.Game.GetVehicleProperties(vehicle)
 			modTurbo          = IsToggleModOn(vehicle, 18),
 			modSmokeEnabled   = IsToggleModOn(vehicle, 20),
 			modXenon          = IsToggleModOn(vehicle, 22),
+			modWheelVariat	  = GetVehicleModVariation(vehicle, 23),
+			modTyresBurst     = GetVehicleTyresCanBurst(vehicle),
 
 			modFrontWheels    = GetVehicleMod(vehicle, 23),
 			modBackWheels     = GetVehicleMod(vehicle, 24),
@@ -731,8 +717,10 @@ function ESX.Game.GetVehicleProperties(vehicle)
 			modAerials        = GetVehicleMod(vehicle, 43),
 			modTrimB          = GetVehicleMod(vehicle, 44),
 			modTank           = GetVehicleMod(vehicle, 45),
+			modWindows        = GetVehicleMod(vehicle, 46),
 			modDoorR          = GetVehicleMod(vehicle, 47),
 			modLivery         = GetVehicleLivery(vehicle),
+			modLivery2         = GetVehicleMod(vehicle, 48),
 			modLightbar       = GetVehicleMod(vehicle, 49),
 		}
 	else
