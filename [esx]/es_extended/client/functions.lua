@@ -690,6 +690,7 @@ function ESX.Game.GetVehicleProperties(vehicle)
 			modTurbo          = IsToggleModOn(vehicle, 18),
 			modSmokeEnabled   = IsToggleModOn(vehicle, 20),
 			modXenon          = IsToggleModOn(vehicle, 22),
+			modHeadlight 	  = GetVehicleHeadlightsColour(vehicle),
 			modWheelVariat	  = GetVehicleModVariation(vehicle, 23),
 			modTyresBurst     = GetVehicleTyresCanBurst(vehicle),
 
