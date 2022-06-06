@@ -35,6 +35,8 @@ function StartPayCheck()
 						TriggerClientEvent('esx:showAdvancedNotification', xPlayer.source, _U('bank'), _U('received_paycheck'), _U('received_salary', salary), 'CHAR_BANK_MAZE', 9)
 					end
 				end
+				
+				TriggerClientEvent('t1ger_insurance:getInsuranceBill', xPlayer.source)				
 			end
 		end
 	end)
