@@ -65,7 +65,7 @@ function OpenMenu(submitCb, cancelCb, restrict)
 
         ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'skin', {
             title = _U('skin_menu'),
-            align = 'top-left',
+            align = 'bottom-left',
             elements = elements
         }, function(data, menu)
             TriggerEvent('skinchanger:getSkin', function(skin) lastSkin = skin end)
