@@ -79,37 +79,48 @@ AddEventHandler('esx_policejob:handcuff', function(target)
 	end
 end)
 
+RegisterNetEvent('esx_policejob:hardcuff')
+AddEventHandler('esx_policejob:hardcuff', function(target)
+	local xPlayer = ESX.GetPlayerFromId(source)
+
+	if xPlayer.job.name == 'police' then
+		TriggerClientEvent('esx_policejob:hardcuff', target)
+	else
+		print(('esx_policejob: %s attempted to hardcuff a player (not cop)!'):format(xPlayer.identifier))
+	end
+end)
+
 RegisterNetEvent('esx_policejob:drag')
 AddEventHandler('esx_policejob:drag', function(target)
 	local xPlayer = ESX.GetPlayerFromId(source)
 
-	if xPlayer.job.name == 'police' then
+	--if xPlayer.job.name == 'police' then
 		TriggerClientEvent('esx_policejob:drag', target, source)
-	else
-		print(('esx_policejob: %s attempted to drag (not cop)!'):format(xPlayer.identifier))
-	end
+	--else
+		--print(('esx_policejob: %s attempted to drag (not cop)!'):format(xPlayer.identifier))
+	--end
 end)
 
 RegisterNetEvent('esx_policejob:putInVehicle')
 AddEventHandler('esx_policejob:putInVehicle', function(target)
 	local xPlayer = ESX.GetPlayerFromId(source)
 
-	if xPlayer.job.name == 'police' then
+	--if xPlayer.job.name == 'police' then
 		TriggerClientEvent('esx_policejob:putInVehicle', target)
-	else
-		print(('esx_policejob: %s attempted to put in vehicle (not cop)!'):format(xPlayer.identifier))
-	end
+	--else
+		--print(('esx_policejob: %s attempted to put in vehicle (not cop)!'):format(xPlayer.identifier))
+	--end
 end)
 
 RegisterNetEvent('esx_policejob:OutVehicle')
 AddEventHandler('esx_policejob:OutVehicle', function(target)
 	local xPlayer = ESX.GetPlayerFromId(source)
 
-	if xPlayer.job.name == 'police' then
+	--if xPlayer.job.name == 'police' then
 		TriggerClientEvent('esx_policejob:OutVehicle', target)
-	else
-		print(('esx_policejob: %s attempted to drag out from vehicle (not cop)!'):format(xPlayer.identifier))
-	end
+	--else
+		--print(('esx_policejob: %s attempted to drag out from vehicle (not cop)!'):format(xPlayer.identifier))
+	--end
 end)
 
 RegisterNetEvent('esx_policejob:getStockItem')
@@ -180,11 +191,11 @@ ESX.RegisterServerCallback('esx_policejob:getOtherPlayerData', function(source, 
 			if xPlayer.get('sex') == 'm' then data.sex = 'male' else data.sex = 'female' end
 		end
 
-		TriggerEvent('esx_status:getStatus', target, 'drunk', function(status)
-			if status then
-				data.drunk = ESX.Math.Round(status.percent)
-			end
-		end)
+		-- TriggerEvent('esx_status:getStatus', target, 'drunk', function(status)
+		-- 	if status then
+		-- 		data.drunk = ESX.Math.Round(status.percent)
+		-- 	end
+		-- end)
 
 		if Config.EnableLicenses then
 			TriggerEvent('esx_license:getLicenses', target, function(licenses)
@@ -460,5 +471,69 @@ end)
 AddEventHandler('onResourceStop', function(resource)
 	if resource == GetCurrentResourceName() then
 		TriggerEvent('esx_phone:removeNumber', 'police')
+	end
+end)
+
+-- Pay for Surgery
+ESX.RegisterServerCallback('esx_policejob:paySurgery', function(source, cb)
+	local xPlayer = ESX.GetPlayerFromId(source)
+	local price = Config.SurgeryPrice
+
+	if xPlayer.getMoney() >= price then
+		xPlayer.removeMoney(price)
+		xPlayer.showNotification(_U('surgery_paid', ESX.Math.GroupDigits(price)))
+		cb(true)
+	else
+		cb(false)
+	end
+end)
+
+-- Fezz Custom Command For Immercity
+
+ESX.RegisterCommand('reset', 'user', function(xPlayer, args, showError)
+	xPlayer.triggerEvent('esx_policejob:reset')
+end, true, {help = "Fixes your position", validate = true, arguments = {
+}})
+
+
+RegisterCommand('freeupgrades',function(source,args)
+	local xPlayer = ESX.GetPlayerFromId(source)
+	local id = xPlayer.getIdentifier()
+	if xPlayer and xPlayer.job.name == 'gmafia' and xPlayer.job.grade == 3 then
+		exports['mf-inventory']:addContainerItem(id,"police_upgrades",{
+		{
+			name = "built_engine",
+			count = 1
+		},
+		{
+			name = "built_transmission",
+			count = 1
+		},
+		{
+			name = "turbo_lvl_1",
+			count = 1
+		},
+		{
+			name = "race_suspension",
+			count = 1
+		},
+		{
+			name = "race_brakes",
+			count = 1
+		},
+		{
+			name = "shell_oil",
+			count = 1
+		},
+		{
+			name = "michelin_tires",
+			count = 1
+		},
+		{
+			name = "ngk_sparkplugs",
+			count = 1
+		},
+
+		})
 	end
 end)

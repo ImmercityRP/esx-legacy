@@ -9,7 +9,7 @@ function OpenVehicleSpawnerMenu(type, station, part, partNum)
 		align    = 'top-left',
 		elements = {
 			{label = _U('garage_storeditem'), action = 'garage'},
-			{label = _U('garage_storeitem'), action = 'store_garage'},
+			--{label = _U('garage_storeitem'), action = 'store_garage'},
 			{label = _U('garage_buyitem'), action = 'buy_vehicle'}
 	}}, function(data, menu)
 		if data.current.action == 'buy_vehicle' then
@@ -90,9 +90,11 @@ function OpenVehicleSpawnerMenu(type, station, part, partNum)
 
 									ESX.Game.SpawnVehicle(data2.current.model, spawnPoint.coords, spawnPoint.heading, function(vehicle)
 										local vehicleProps = allVehicleProps[data2.current.plate]
+										local status = 0
 										ESX.Game.SetVehicleProperties(vehicle, vehicleProps)
 
-										TriggerServerEvent('esx_vehicleshop:setJobVehicleState', data2.current.plate, false)
+										TriggerServerEvent('esx_vehicleshop:setJobVehicleState', data2.current.plate, status)
+										TriggerServerEvent('t1ger_keys:addKeysToVehicle',data2.current.plate)
 										ESX.ShowNotification(_U('garage_released'))
 									end)
 								end
@@ -109,8 +111,8 @@ function OpenVehicleSpawnerMenu(type, station, part, partNum)
 					ESX.ShowNotification(_U('garage_empty'))
 				end
 			end, type)
-		elseif data.current.action == 'store_garage' then
-			StoreNearbyVehicle(playerCoords)
+		-- elseif data.current.action == 'store_garage' then
+		-- 	StoreNearbyVehicle(playerCoords)
 		end
 	end, function(data, menu)
 		menu.close()
