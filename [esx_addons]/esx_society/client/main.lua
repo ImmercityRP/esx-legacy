@@ -71,9 +71,9 @@ function OpenBossMenu(society, close, options)
 			local defaultOptions = {
 				withdraw = true,
 				deposit = true,
-				wash = true,
+				wash = false,
 				employees = true,
-				grades = true
+				grades = false
 			}
 
 			for k,v in pairs(defaultOptions) do
