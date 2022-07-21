@@ -527,7 +527,7 @@ local GetGroundZFor_3dCoord = GetGroundZFor_3dCoord
 			end
 	
 			-- Fade screen to hide how clients get teleported.
-			DoScreenFadeOut(650)
+			DoScreenFadeOut(1000)
 			while not IsScreenFadedOut() do
 					Wait(0)
 			end
@@ -582,7 +582,7 @@ local GetGroundZFor_3dCoord = GetGroundZFor_3dCoord
 			end
 	
 			-- Remove black screen once the loop has ended.
-			DoScreenFadeIn(650)
+			DoScreenFadeIn(1000)
 			if vehicle > 0 then
 					FreezeEntityPosition(vehicle, false)
 			else
